@@ -1,0 +1,10 @@
+﻿{
+  "vpo_kill_feed_msg_killed_by": "killed by",
+  "vpo_kill_feed_msg_dead": "is dead",
+  "vpo_se_combat_name": "Battle",
+  "vpo_se_combat_start_msg": "You have entered the battle!",
+  "vpo_se_combat_stop_msg": "You are out of the fight",
+  "vpo_tamed_msg_defending": "Guards the territory",
+  "vpo_tamed_msg_following": "Follows",
+  "vpo_msg_noteleport_combat": "Cannot teleport in combat"
+}

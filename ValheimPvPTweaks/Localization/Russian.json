@@ -1,0 +1,10 @@
+﻿{
+	"vpo_kill_feed_msg_killed_by": "погибает от руки",
+	"vpo_kill_feed_msg_dead": "умер",
+	"vpo_se_combat_name": "Сражение",
+	"vpo_se_combat_start_msg": "Вы вступили в бой!",
+	"vpo_se_combat_stop_msg": "Вы вышли из боя",
+	"vpo_tamed_msg_defending": "Охраняет территорию",
+	"vpo_tamed_msg_following": "Следует за",
+	"vpo_msg_noteleport_combat": "Невозможно телепортироваться во время сражения"
+}
