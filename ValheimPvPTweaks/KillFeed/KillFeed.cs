@@ -122,6 +122,7 @@ namespace ValheimPvPTweaks.KillFeed
             if (string.IsNullOrEmpty(url) || !killData.characterIsPlayer)
                 return;
 
+            Log.Info($"Sending discord notifiaction {killData.characterName} killed by {killData.attackerName}");
             var message = "";
             if (!string.IsNullOrEmpty(killData.attackerName) && !string.IsNullOrEmpty(Plugin.Configuration.KilledMessageFormat.Value))
             {
@@ -130,7 +131,7 @@ namespace ValheimPvPTweaks.KillFeed
                     .Replace("{player}", killData.characterName)
                     .Replace("{attacker}", attackerName);
             }
-            else if (string.IsNullOrEmpty(Plugin.Configuration.DeadMessageFormat.Value))
+            else if (!string.IsNullOrEmpty(Plugin.Configuration.DeadMessageFormat.Value))
             {
                 message = Plugin.Configuration.DeadMessageFormat.Value
                     .Replace("{player}", killData.characterName);
