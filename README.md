@@ -70,6 +70,8 @@ Typedef#3996
 https://discord.gg/MjQZKuB4z2
 
 ### Changelog
+- 1.0.8
+Minor update. Fixed discord webhook
 - 1.0.7
 Added option to configure damage of crossbow.
 - 1.0.6
