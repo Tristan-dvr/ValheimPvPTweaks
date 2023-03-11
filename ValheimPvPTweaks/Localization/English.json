@@ -6,5 +6,6 @@
   "vpo_se_combat_stop_msg": "You are out of the fight",
   "vpo_tamed_msg_defending": "Guards the territory",
   "vpo_tamed_msg_following": "Follows",
-  "vpo_msg_noteleport_combat": "Cannot teleport in combat"
+  "vpo_msg_noteleport_combat": "Cannot teleport in combat",
+  "vpo_msg_noequip_combat": "Cannot change equipment in combat"
 }

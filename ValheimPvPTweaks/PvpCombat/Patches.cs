@@ -44,5 +44,30 @@ namespace ValheimPvPTweaks.PvpCombat
             }
             return true;
         }
+
+        [HarmonyPrefix, HarmonyPatch(typeof(Player), nameof(Player.ToggleEquiped))]
+        private static bool Player_ToggleEquiped(Player __instance, ItemDrop.ItemData item, ref bool __result)
+        {
+            if (!__instance.IsLocalPlayer() 
+                || !__instance.InCombat() 
+                || !item.IsEquipable() 
+                || Plugin.Configuration.AllowChangeEquipmentInCombat.Value)
+                return true;
+
+            switch (item.m_shared.m_itemType)
+            {
+                case ItemDrop.ItemData.ItemType.Chest:
+                case ItemDrop.ItemData.ItemType.Hands:
+                case ItemDrop.ItemData.ItemType.Helmet:
+                case ItemDrop.ItemData.ItemType.Legs:
+                case ItemDrop.ItemData.ItemType.Shoulder:
+                case ItemDrop.ItemData.ItemType.Utility:
+                    __instance.Message(MessageHud.MessageType.Center, "$vpo_msg_noequip_combat");
+                    __result = true;
+                    return false;
+                default:
+                    return true;
+            }
+        }
     }
 }

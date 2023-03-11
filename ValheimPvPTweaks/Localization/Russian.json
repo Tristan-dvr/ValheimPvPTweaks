@@ -6,5 +6,6 @@
 	"vpo_se_combat_stop_msg": "Вы вышли из боя",
 	"vpo_tamed_msg_defending": "Охраняет территорию",
 	"vpo_tamed_msg_following": "Следует за",
-	"vpo_msg_noteleport_combat": "Невозможно телепортироваться во время сражения"
+	"vpo_msg_noteleport_combat": "Невозможно телепортироваться во время сражения",
+	"vpo_msg_noequip_combat": "Невозможно сменить экипировку во время сражения"
 }
