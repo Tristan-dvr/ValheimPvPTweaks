@@ -6,6 +6,7 @@ namespace ValheimPvPTweaks
     class Configuration
     {
         public enum ConsoleMode { Disabled, AdminOnly, Enabled };
+        public enum SkillLossType { Vanilla, NoLossInPvp, NoLoss }
 
         public ConfigEntry<int> MaxDeathPingRadius;
         public ConfigEntry<int> CombatDuration;
@@ -43,6 +44,9 @@ namespace ValheimPvPTweaks
         public ConfigEntry<int> StaffIceEitr;
         public ConfigEntry<string> StaffShield;
         public ConfigEntry<int> StaffShieldEitr;
+
+        public ConfigEntry<bool> EnableTombStoneBoost;
+        public ConfigEntry<SkillLossType> SkillsLoss;
 
         public Configuration(ConfigFile config, ConfigSync sync)
         {
@@ -127,6 +131,13 @@ namespace ValheimPvPTweaks
 
             CrossbowDamage = Bind(config, sync, "Crossbow", "Damage", "",
                 "Damage of crossbow - Damage:Damage per item level. Recommended: 150:5. Leave empty to leave vanilla values");
+
+            EnableTombStoneBoost = Bind(config, sync, "Tweaks", "Tomb stone boost", true,
+                "Tomb stone boost can be disabled to prevent abuse it to get an advantage in pvp.");
+            SkillsLoss = Bind(config, sync, "Tweaks", "Skills loss", SkillLossType.Vanilla,
+                $"{SkillLossType.Vanilla} - loose skills as in vanilla game\n" +
+                $"{SkillLossType.NoLossInPvp} - if you die in pvp you dont loose skills\n" +
+                $"{SkillLossType.NoLoss} - you dont loose skills on death at all");
         }
 
         private ConfigEntry<T> Bind<T>(ConfigFile config, ConfigSync sync, string section, string key, T value, string description, bool syncWithServer = true)

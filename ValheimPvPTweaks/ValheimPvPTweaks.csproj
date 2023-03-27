@@ -100,6 +100,8 @@
     <Compile Include="PvpCombat\TamedAnimalCombatHandler.cs" />
     <Compile Include="PvpCombat\TamedAnimalsPvpPatches.cs" />
     <Compile Include="ThreadinUtil.cs" />
+    <Compile Include="Tweaks\SkillsLossPatches.cs" />
+    <Compile Include="Tweaks\TombStoneBoostPatches.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ILRepack.targets" />
