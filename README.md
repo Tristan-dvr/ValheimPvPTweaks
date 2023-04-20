@@ -70,6 +70,8 @@ Typedef#3996
 https://discord.gg/MjQZKuB4z2
 
 ### Changelog
+- 1.0.11
+Fixed compatibility with new game version
 - 1.0.10
 Added an option to configure tomb stone boost and skill loss at death
 - 1.0.9

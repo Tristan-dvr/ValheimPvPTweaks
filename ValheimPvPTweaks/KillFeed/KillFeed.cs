@@ -10,7 +10,7 @@ namespace ValheimPvPTweaks.KillFeed
 
         private static UserInfo KillFeedUser = new UserInfo()
         {
-            Name = "<color=cyan>Kill feed</color>",
+            Name = "Kill feed", //  color tags broken, was cyan
         };
 
         public static event Action<KillData> OnCharacterKilled;
