@@ -7,7 +7,11 @@ namespace ValheimPvPTweaks.KillFeed
     public class KillFeed : MonoBehaviour
     {
         const string KillFeedRpc = "VPT_KillFeedRpc";
-        const string ChatName = "<color=cyan>Kill feed</color>";
+
+        private static UserInfo KillFeedUser = new UserInfo()
+        {
+            Name = "<color=cyan>Kill feed</color>",
+        };
 
         public static event Action<KillData> OnCharacterKilled;
 
@@ -54,12 +58,12 @@ namespace ValheimPvPTweaks.KillFeed
             {
                 var killMessage = $"{characterName} $vpo_kill_feed_msg_killed_by {attackerName}".Localize();
 
-                Chat.instance.AddString(ChatName, killMessage, Talker.Type.Shout);
-                Chat.instance.AddInworldText(null, arg1, position, Talker.Type.Shout, ChatName, killMessage);
+                Chat.instance.AddString(KillFeedUser.Name, killMessage, Talker.Type.Shout);
+                Chat.instance.AddInworldText(null, arg1, position, Talker.Type.Shout, KillFeedUser, killMessage);
             }
             else
             {
-                Chat.instance.AddString(ChatName, $"{characterName} $vpo_kill_feed_msg_dead".Localize(), Talker.Type.Normal);
+                Chat.instance.AddString(KillFeedUser.Name, $"{characterName} $vpo_kill_feed_msg_dead".Localize(), Talker.Type.Normal);
             }
             Chat.instance.m_hideTimer = 0;
         }

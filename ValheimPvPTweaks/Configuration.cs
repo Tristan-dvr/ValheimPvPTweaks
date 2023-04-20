@@ -74,22 +74,22 @@ namespace ValheimPvPTweaks
                 "If true then cooldown of boss power will be reset when change active boss power");
             BonemassConfig = Bind(config, sync, "Boss power", 
                 "Bonemass", "300:1200",
-                "Duration and cooldown of Bonemass power");
+                "Duration and cooldown of Bonemass power (leave empty to leave vanilla values)");
             YagluthConfig = Bind(config, sync, "Boss power",
                 "Yagluth", "300:1200",
-                "Duration and cooldown of Yagluth power");
+                "Duration and cooldown of Yagluth power (leave empty to leave vanilla values)");
             EikthyrConfig = Bind(config, sync, "Boss power",
                 "Eikthyr", "300:1200",
-                "Duration and cooldown of Eikthyr power");
+                "Duration and cooldown of Eikthyr power (leave empty to leave vanilla values)");
             ModerConfig = Bind(config, sync, "Boss power",
                 "Moder", "300:1200",
-                "Duration and cooldown of Moder power");
+                "Duration and cooldown of Moder power (leave empty to leave vanilla values)");
             ElderConfig = config.Bind("Boss power",
                 "The Elder", "300:1200",
-                "Duration and cooldown of The Elder power");
+                "Duration and cooldown of The Elder power (leave empty to leave vanilla values)");
             SeekerQueenConfig = config.Bind("Boss power",
                 "Seeker Queen", "300:1200",
-                "Duration and cooldown of Seeker Queen power");
+                "Duration and cooldown of Seeker Queen power (leave empty to leave vanilla values)");
 
             Console = Bind(config, sync, "Console", "Mode", ConsoleMode.AdminOnly,
                 "Allow to force enable or disable console");
