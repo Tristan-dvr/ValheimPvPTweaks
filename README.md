@@ -47,19 +47,19 @@ All kills, including creature kills, can also be tracked on the server-side
 ```
 KillFeed.OnCharacterKilled += (killData) =>
 {
-	if (killData.characterIsPlayer)
-	{
-		//  killed player
-		var zdo = killData.characterZdo;
-		var peer = killData.characterPeer;
-	}
-
-	if (killData.attackerIsPlayer)
-	{
-		//  someone killed by player
-		var zdo = killData.attackerZdo;
-		var peer = killData.attackerPeer;
-	}
+    if (killData.killer.isPlayer)
+    {
+        var zdo = killData.killer.zdo;
+        var prefab = killData.killer.prefabName;
+        var name = killData.killer.displayName;
+    }
+    
+    if (killData.killed.isPlayer)
+    {
+        var zdo = killData.killed.zdo;
+        var prefab = killData.killed.prefabName;
+        var name = killData.killed.displayName;
+    }
 };
 ```
 </details>
@@ -70,6 +70,8 @@ Typedef#3996
 https://discord.gg/MjQZKuB4z2
 
 ### Changelog
+- 1.0.12
+Fixed compatibility with new game version. Updated KillFeed api (for modders)
 - 1.0.11
 Fixed compatibility with new game version
 - 1.0.10
