@@ -87,14 +87,22 @@ namespace ValheimPvPTweaks.KillFeed
 
                 OnCharacterKilled?.Invoke(new KillData
                 {
-                    characterName = characterName,
-                    attackerName = attackerName,
-                    characterIsPlayer = characterIsPlayer,
-                    attackerIsPlayer = attackerIsPlayer,
-                    characterZdo = characterZdo,
-                    attackerZdo = attackerZdo,
-                    characterPeer = characterPeer,
-                    attackerPeer = attackerPeer,
+                    killed = new KillData.CharacterData()
+                    {
+                        displayName = characterName,
+                        isPlayer = characterIsPlayer,
+                        peer = characterPeer,
+                        zdo = characterZdo,
+                        prefabName = ZNetScene.instance.GetPrefab(characterZdo.GetPrefab())?.name,
+                    },
+                    killer = new KillData.CharacterData()
+                    {
+                        displayName = attackerName,
+                        isPlayer = attackerIsPlayer,
+                        peer = attackerPeer,
+                        zdo = attackerZdo,
+                        prefabName = ZNetScene.instance.GetPrefab(attackerZdo.GetPrefab())?.name,
+                    },
                     weapon = weapon,
                 });
             }
@@ -106,16 +114,17 @@ namespace ValheimPvPTweaks.KillFeed
 
         private void SendKillNotifications(KillData killData)
         {
-            if (!killData.characterIsPlayer)
+            var charcater = killData.killed;
+            if (!charcater.isPlayer)
                 return;
 
-            var position = killData.characterZdo.GetPosition();
+            var position = charcater.zdo.GetPosition();
             var maxPingRadius = Plugin.Configuration.MaxDeathPingRadius.Value;
             foreach (var peer in ZNet.instance.m_peers)
             {
                 if (maxPingRadius > 0 && peer.IsReady() && Utils.DistanceXZ(peer.GetRefPos(), position) < maxPingRadius)
                 {
-                    ZRoutedRpc.instance.InvokeRoutedRPC(peer.m_uid, KillFeedRpc, killData.characterName, killData.attackerName, position);
+                    ZRoutedRpc.instance.InvokeRoutedRPC(peer.m_uid, KillFeedRpc, charcater.displayName, killData.killer.displayName, position);
                 }
             }
         }
@@ -123,22 +132,24 @@ namespace ValheimPvPTweaks.KillFeed
         private void SendDiscordNotification(KillData killData)
         {
             var url = Plugin.Configuration.DiscordWebhook.Value;
-            if (string.IsNullOrEmpty(url) || !killData.characterIsPlayer)
+            var character = killData.killed;
+            var attacker = killData.killer;
+            if (string.IsNullOrEmpty(url) || !character.isPlayer)
                 return;
 
-            Log.Info($"Sending discord notifiaction {killData.characterName} killed by {killData.attackerName}");
+            Log.Info($"Sending discord notifiaction {character.displayName} killed by {attacker.displayName}");
             var message = "";
-            if (!string.IsNullOrEmpty(killData.attackerName) && !string.IsNullOrEmpty(Plugin.Configuration.KilledMessageFormat.Value))
+            if (!string.IsNullOrEmpty(attacker.displayName) && !string.IsNullOrEmpty(Plugin.Configuration.KilledMessageFormat.Value))
             {
-                var attackerName = Localization.instance.Localize(killData.attackerName);
+                var attackerName = Localization.instance.Localize(attacker.displayName);
                 message = Plugin.Configuration.KilledMessageFormat.Value
-                    .Replace("{player}", killData.characterName)
+                    .Replace("{player}", character.displayName)
                     .Replace("{attacker}", attackerName);
             }
             else if (!string.IsNullOrEmpty(Plugin.Configuration.DeadMessageFormat.Value))
             {
                 message = Plugin.Configuration.DeadMessageFormat.Value
-                    .Replace("{player}", killData.characterName);
+                    .Replace("{player}", character.displayName);
             }
 
             if (!string.IsNullOrEmpty(message))
@@ -182,15 +193,18 @@ namespace ValheimPvPTweaks.KillFeed
 
         public struct KillData
         {
-            public string characterName;
-            public string attackerName;
-            public ZDO characterZdo;
-            public ZDO attackerZdo;
-            public bool characterIsPlayer;
-            public bool attackerIsPlayer;
-            public ZNetPeer characterPeer;
-            public ZNetPeer attackerPeer;
+            public CharacterData killed;
+            public CharacterData killer;
             public string weapon;
+
+            public class CharacterData
+            {
+                public string displayName;
+                public string prefabName;
+                public ZNetPeer peer;
+                public bool isPlayer;
+                public ZDO zdo;
+            }
         }
     }
 }
