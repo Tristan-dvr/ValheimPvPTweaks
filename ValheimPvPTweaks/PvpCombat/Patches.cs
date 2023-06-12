@@ -45,8 +45,8 @@ namespace ValheimPvPTweaks.PvpCombat
             return true;
         }
 
-        [HarmonyPrefix, HarmonyPatch(typeof(Player), nameof(Player.ToggleEquiped))]
-        private static bool Player_ToggleEquiped(Player __instance, ItemDrop.ItemData item, ref bool __result)
+        [HarmonyPrefix, HarmonyPatch(typeof(Player), nameof(Player.ToggleEquipped))]
+        private static bool Player_ToggleEquipped(Player __instance, ItemDrop.ItemData item, ref bool __result)
         {
             if (!__instance.IsLocalPlayer() 
                 || !__instance.InCombat() 

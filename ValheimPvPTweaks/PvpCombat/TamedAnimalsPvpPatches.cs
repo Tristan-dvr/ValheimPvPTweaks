@@ -6,11 +6,12 @@ namespace ValheimPvPTweaks.PvpCombat
     [HarmonyPatch]
     class TamedAnimalsPvpPatches
     {
-        [HarmonyFinalizer, HarmonyPatch(typeof(Character), nameof(Character.Start))]
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(Character), nameof(Character.Start))]
+        [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.Start))]
         private static void Character_Start(Character __instance)
         {
-            if (__instance.IsTamed())
-                __instance.gameObject.AddComponent<TamedAnimalCombatHandler>();
+            Character_SetTamed(__instance, __instance.IsTamed());
         }
 
         [HarmonyPrefix, HarmonyPatch(typeof(Character), nameof(Character.Damage))]

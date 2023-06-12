@@ -29,7 +29,7 @@ namespace ValheimPvPTweaks.PvpCombat
 
         private void OnEnteredPvpMode(long obj)
         {
-            _player.GetSEMan().AddStatusEffect(SE_Combat.Name, true);
+            _player.GetSEMan().AddStatusEffect(SE_Combat.Name.GetStableHashCode(), true);
         }
 
         public static void EnterCombat(Character character)

@@ -15,7 +15,7 @@ namespace ValheimPvPTweaks
     {
         private const string Guid = "org.tristan.pvptweaks";
         public const string Name = "Valheim PvP Tweaks";
-        public const string Version = "1.0.11";
+        public const string Version = "1.0.12";
 
         internal static Configuration Configuration { get; private set; }
         internal static ConfigSync Sync { get; private set; }
@@ -26,7 +26,7 @@ namespace ValheimPvPTweaks
             {
                 DisplayName = Name,
                 CurrentVersion = Version,
-                MinimumRequiredVersion = "1.0.10",
+                MinimumRequiredVersion = Version,
             };
             Configuration = new Configuration(Config, Sync);
             Log.CreateInstance(Logger);
