@@ -7,9 +7,14 @@ namespace ValheimPvPTweaks.KillFeed
     {
         private static KillFeed _killFeed;
 
-        [HarmonyPostfix, HarmonyPatch(typeof(Character), nameof(Character.Start))]
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Character), nameof(Character.Start))]
+        [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.Start))]
         private static void Character_Start(Character __instance)
         {
+            if (__instance.TryGetComponent<CharacterKillTracker>(out _)) 
+                return;
+
             __instance.gameObject.AddComponent<CharacterKillTracker>();
         }
 

@@ -1,5 +1,6 @@
 ﻿using DiscordTools;
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace ValheimPvPTweaks.KillFeed
@@ -75,7 +76,7 @@ namespace ValheimPvPTweaks.KillFeed
             {
                 if (characterId.IsNone() || !ZDOMan.instance.m_objectsByID.ContainsKey(characterId))
                 {
-                    Log.Debug($"Received invalid killed character id {characterId} from {peer.m_playerName}:{peer.GetSteamId()}");
+                    Log.Debug($"Received invalid killed character id {characterId} from {peer?.m_playerName}:{peer?.GetSteamId()}");
                     return;
                 }
 
@@ -101,14 +102,14 @@ namespace ValheimPvPTweaks.KillFeed
                         isPlayer = attackerIsPlayer,
                         peer = attackerPeer,
                         zdo = attackerZdo,
-                        prefabName = ZNetScene.instance.GetPrefab(attackerZdo.GetPrefab())?.name,
+                        prefabName = attackerZdo != null ? ZNetScene.instance.GetPrefab(attackerZdo.GetPrefab())?.name : string.Empty,
                     },
                     weapon = weapon,
                 });
             }
             catch (Exception e)
             {
-                Log.Warning($"Cannot handle kill received from {peer.m_playerName}:{peer.GetSteamId()} ({peer.m_characterID}) {attackerId} {characterId}: {e.Message}\n{e.StackTrace}]");
+                Log.Warning($"Cannot handle kill received from {peer?.m_playerName}:{peer?.GetSteamId()} ({peer?.m_characterID}) {attackerId} {characterId}: {e.Message}\n{e.StackTrace}]");
             }
         }
 
