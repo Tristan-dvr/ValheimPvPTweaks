@@ -7,11 +7,9 @@ namespace ValheimPvPTweaks.PvpCombat
 {
     class TamedAnimalCombatHandler : MonoBehaviour
     {
-        private const string FollowTargetZdoKey = "follow_target";
-
         private Character _character;
         private ZNetView _view;
-        private HashSet<long> _markedPlayersEnemy = new HashSet<long>();
+        private HashSet<string> _markedPlayersEnemy = new HashSet<string>();
         private PrivateArea _defendingArea;
 
         private static event Action<Character, Player> _onPlayerAttackerCharacter;
@@ -22,10 +20,9 @@ namespace ValheimPvPTweaks.PvpCombat
             _view = _character.m_nview;
 
             InvokeRepeating(nameof(RefreshDefendingArea), 0, 5);
-            InvokeRepeating(nameof(TryFindFollowingPlayer), 1, 5);
         }
 
-        private bool TryGetTameable(out Tameable tameable) => TryGetComponent<Tameable>(out tameable);
+        private bool TryGetTameable(out Tameable tameable) => TryGetComponent(out tameable);
 
         private void OnEnable()
         {
@@ -60,16 +57,21 @@ namespace ValheimPvPTweaks.PvpCombat
 
         public bool IsDefendingArea() => _defendingArea != null;
 
-        public Player GetFollowPlayer() => Player.GetPlayer(GetFollowPlayerId());
+        public Player GetFollowPlayer()
+        {
+            return TryGetTameable(out var tameable)
+                ? tameable.m_monsterAI?.GetFollowTarget()?.GetComponent<Player>()
+                : null;
+        }
 
         public bool CheckIsEnemy(TamedAnimalCombatHandler character)
         {
-            if (character.IsFollowingPlayer() 
-                && IsEnemy(character.GetFollowPlayerId()) 
-                && GetFollowPlayerId() != character.GetFollowPlayerId())
+            var followTarget = character.GetFollowPlayer();
+            var myTarget = GetFollowPlayer();
+            if (followTarget != null && CheckIsEnemy(followTarget) && myTarget != followTarget)
                 return true;
 
-            if (IsFollowingPlayer() && character.CheckIsEnemy(GetFollowPlayer()))
+            if (myTarget != null && character.CheckIsEnemy(myTarget))
                 return true;
 
             return false;
@@ -77,34 +79,20 @@ namespace ValheimPvPTweaks.PvpCombat
 
         public bool CheckIsEnemy(Player player)
         {
-            if (IsEnemy(player.GetPlayerID()))
+            if (IsEnemy(player.GetPlayerName()))
                 return true;
 
             if (IsDefendingArea() && !_defendingArea.HaveAccess(player) && player.InCombat())
             {
-                _markedPlayersEnemy.Add(player.GetPlayerID());
+                _markedPlayersEnemy.Add(player.GetPlayerName());
                 return true;
             }
             return false;
         }
 
-        private bool IsEnemy(long playerId)
+        private bool IsEnemy(string name)
         {
-            return _markedPlayersEnemy.Contains(playerId);
-        }
-
-        public void RefreshFollowingPlayer()
-        {
-            if (IsFollowingPlayer() 
-                && TryGetTameable(out var tameable)
-                && tameable.m_monsterAI.GetFollowTarget().TryGetComponent<Player>(out var player))
-            {
-                _view.GetZDO().Set(FollowTargetZdoKey, player.GetPlayerID());
-            }
-            else
-            {
-                _view.GetZDO().Set(FollowTargetZdoKey, 0L);
-            }
+            return _markedPlayersEnemy.Contains(name);
         }
 
         private void RefreshDefendingArea()
@@ -117,20 +105,5 @@ namespace ValheimPvPTweaks.PvpCombat
             else
                 _defendingArea = PrivateArea.m_allAreas.FirstOrDefault(p => p.IsEnabled() && p.IsInside(transform.position, 0));
         }
-
-        private void TryFindFollowingPlayer()
-        {
-            if (_view == null || !_view.IsValid() || !_view.IsOwner())
-                return;
-
-            if (!IsFollowingPlayer() && GetFollowPlayerId() != 0)
-            {
-                var player = GetFollowPlayer();
-                if (player != null && TryGetTameable(out var tameable))
-                    tameable.Command(player);
-            }
-        }
-
-        private long GetFollowPlayerId() => _view.GetZDO().GetLong(FollowTargetZdoKey);
     }
 }

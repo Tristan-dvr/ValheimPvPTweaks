@@ -50,13 +50,6 @@ namespace ValheimPvPTweaks.PvpCombat
             __instance.SetupMaxHealth();
         }
 
-        [HarmonyPostfix, HarmonyPatch(typeof(Tameable), nameof(Tameable.RPC_Command))]
-        private static void Tameable_RPC_Command(Tameable __instance)
-        {
-            if (__instance.TryGetComponent<TamedAnimalCombatHandler>(out var handler))
-                handler.RefreshFollowingPlayer();
-        }
-
         [HarmonyPrefix, HarmonyPatch(typeof(Tameable), nameof(Tameable.Interact))]
         private static bool Tameable_Interact(Character __instance, Humanoid user)
         {
