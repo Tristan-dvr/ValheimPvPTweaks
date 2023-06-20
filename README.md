@@ -70,7 +70,7 @@ Typedef#3996
 https://discord.gg/MjQZKuB4z2
 
 ### Changelog
-- 1.0.13
+- 1.0.14
 Fixed tamed characters after game update
 - 1.0.12
 Fixed compatibility with new game version. Updated KillFeed api (for modders)
