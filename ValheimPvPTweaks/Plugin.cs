@@ -15,7 +15,7 @@ namespace ValheimPvPTweaks
     {
         private const string Guid = "org.tristan.pvptweaks";
         public const string Name = "Valheim PvP Tweaks";
-        public const string Version = "1.0.14";
+        public const string Version = "1.0.15";
 
         internal static Configuration Configuration { get; private set; }
         internal static ConfigSync Sync { get; private set; }
@@ -139,7 +139,7 @@ namespace ValheimPvPTweaks
 
         private static void SetStatusEffectConfig(string config, string effectName)
         {
-            var effect = ObjectDB.instance.GetStatusEffect(effectName);
+            var effect = ObjectDB.instance.GetStatusEffect(effectName.GetStableHashCode());
             if (TryParseTwoValues(config, out var duration, out var cooldown) && effect != null)
             {
                 effect.m_ttl = duration;

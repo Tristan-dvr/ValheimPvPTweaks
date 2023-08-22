@@ -20,7 +20,7 @@ namespace ValheimPvPTweaks.PvpCombat
         [HarmonyPostfix, HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Awake))]
         private static void InventoryGui_Awake(InventoryGui __instance)
         {
-            var combat = ObjectDB.instance.GetStatusEffect(SE_Combat.Name);
+            var combat = ObjectDB.instance.GetStatusEffect(SE_Combat.Name.GetStableHashCode());
             combat.m_icon = __instance.m_pvp.GetComponent<ToggleImage>().m_onImage;
         }
 

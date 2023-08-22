@@ -70,6 +70,8 @@ Typedef#3996
 https://discord.gg/MjQZKuB4z2
 
 ### Changelog
+- 1.0.15
+Fixed compatibility with new game version
 - 1.0.14
 Fixed tamed characters after game update
 - 1.0.12
