@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using HarmonyLib;
-using Jotunn.Entities;
 using Jotunn.Managers;
 using ServerSync;
 using System;
@@ -15,7 +14,7 @@ namespace ValheimPvPTweaks
     {
         private const string Guid = "org.tristan.pvptweaks";
         public const string Name = "Valheim PvP Tweaks";
-        public const string Version = "1.0.15";
+        public const string Version = "1.0.16";
 
         internal static Configuration Configuration { get; private set; }
         internal static ConfigSync Sync { get; private set; }
@@ -39,8 +38,7 @@ namespace ValheimPvPTweaks
 
         private void LoadLocalization()
         {
-            var localization = new CustomLocalization();
-            LocalizationManager.Instance.AddLocalization(localization);
+            var localization = LocalizationManager.Instance.GetLocalization();
             localization.AddJsonFile("English", Helper.LoadTextFromResources("English.json"));
             localization.AddJsonFile("Russian", Helper.LoadTextFromResources("Russian.json"));
         }

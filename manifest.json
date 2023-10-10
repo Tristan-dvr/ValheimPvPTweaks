@@ -1,10 +1,10 @@
 {
   "name": "Valheim_PvP_Tweaks",
-  "version_number": "1.0.15",
+  "version_number": "1.0.16",
   "website_url": "https://github.com/Tristan-dvr/ValheimPvPTweaks",
   "description": "Absolutely necessary features for PvP in Valheim. Can also be used for a variety of PvE gameplay.",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.1901",
-    "ValheimModding-Jotunn-2.9.0"
+    "denikson-BepInExPack_Valheim-5.4.2200",
+    "ValheimModding-Jotunn-2.14.4"
   ]
 }
