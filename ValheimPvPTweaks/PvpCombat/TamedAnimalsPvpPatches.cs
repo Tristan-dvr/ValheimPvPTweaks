@@ -82,6 +82,8 @@ namespace ValheimPvPTweaks.PvpCombat
             if (__result || !Plugin.Configuration.CreaturesProtectWard.Value)
                 return;
 
+            if (a == null || b == null) return;
+
             Character tamed;
             Character other;
             if (a.IsTamed())

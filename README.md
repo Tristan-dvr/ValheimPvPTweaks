@@ -70,16 +70,8 @@ Typedef#3996
 https://discord.gg/MjQZKuB4z2
 
 ### Changelog
-- 1.0.16
-Fixed compatibility with new game version
-- 1.0.15
-Fixed compatibility with new game version
-- 1.0.14
-Fixed tamed characters after game update
-- 1.0.12
-Fixed compatibility with new game version. Updated KillFeed api (for modders)
-- 1.0.11
-Fixed compatibility with new game version
+- 1.0.11 - 1.0.17
+Fixed compatibility with new game versions
 - 1.0.10
 Added an option to configure tomb stone boost and skill loss at death
 - 1.0.9
