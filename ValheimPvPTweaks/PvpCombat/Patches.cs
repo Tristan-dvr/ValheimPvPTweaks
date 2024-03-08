@@ -44,6 +44,19 @@ namespace ValheimPvPTweaks.PvpCombat
             return false;
         }
 
+        [HarmonyPrefix, HarmonyPatch(typeof(Humanoid), nameof(Humanoid.Pickup))]
+        private static void Humanoid_Pickup(Humanoid __instance, ref bool autoequip)
+        {
+            if (!__instance.IsPlayer()) return;
+
+            if (!autoequip || Plugin.Configuration.AllowChangeEquipmentInCombat.Value) return;
+
+            var player = __instance as Player;
+            if (!player.IsLocalPlayer() || !player.InCombat()) return;
+
+            autoequip = false;
+        }
+
         [HarmonyPrefix, HarmonyPatch(typeof(Player), nameof(Player.ToggleEquipped))]
         private static bool Player_ToggleEquipped(Player __instance, ItemDrop.ItemData item, ref bool __result)
         {

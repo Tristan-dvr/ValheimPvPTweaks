@@ -9,14 +9,17 @@
         public override void Setup(Character character)
         {
             base.Setup(character);
+            m_healthRegenMultiplier = Plugin.Configuration.CombatHealthRegen.Value;
+            m_ttl = Plugin.Configuration.CombatDuration.Value;
             m_character.m_nview?.GetZDO()?.Set(Constants.InCombatZdoKey, true);
         }
 
         public override void Stop()
         {
             base.Stop();
-            if (!Game.instance.IsShuttingDown())
-                m_character.m_nview?.GetZDO()?.Set(Constants.InCombatZdoKey, false);
+            if (Game.instance.IsShuttingDown()) return;
+
+            m_character.m_nview?.GetZDO()?.Set(Constants.InCombatZdoKey, false);
         }
 
         public static SE_Combat Create()
@@ -24,7 +27,6 @@
             var se = CreateInstance<SE_Combat>();
             se.name = Name;
             se.m_name = "$vpo_se_combat_name";
-            se.m_ttl = Plugin.Configuration.CombatDuration.Value;
 
             se.m_startMessage = "$vpo_se_combat_start_msg";
             se.m_startMessageType = MessageHud.MessageType.Center;

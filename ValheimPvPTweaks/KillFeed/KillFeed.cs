@@ -1,6 +1,7 @@
 ﻿using DiscordTools;
 using System;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace ValheimPvPTweaks.KillFeed
@@ -17,6 +18,7 @@ namespace ValheimPvPTweaks.KillFeed
         public static event Action<KillData> OnCharacterKilled;
 
         private int _playerPrefabHash;
+        private StringBuilder _builder = new StringBuilder();
         
         private void Awake()
         {
@@ -116,17 +118,21 @@ namespace ValheimPvPTweaks.KillFeed
         private void SendKillNotifications(KillData killData)
         {
             var charcater = killData.killed;
-            if (!charcater.isPlayer)
-                return;
+            if (!charcater.isPlayer) return;
 
             var position = charcater.zdo.GetPosition();
             var maxPingRadius = Plugin.Configuration.MaxDeathPingRadius.Value;
+            if (maxPingRadius <= 0) return;
+
             foreach (var peer in ZNet.instance.m_peers)
             {
-                if (maxPingRadius > 0 && peer.IsReady() && Utils.DistanceXZ(peer.GetRefPos(), position) < maxPingRadius)
-                {
-                    ZRoutedRpc.instance.InvokeRoutedRPC(peer.m_uid, KillFeedRpc, charcater.displayName, killData.killer.displayName, position);
-                }
+                if (!peer.IsReady() || Utils.DistanceXZ(peer.GetRefPos(), position) >= maxPingRadius) continue;
+
+                ZRoutedRpc.instance.InvokeRoutedRPC(peer.m_uid,
+                    KillFeedRpc,
+                    charcater.displayName,
+                    killData.killer.displayName,
+                    position);
             }
         }
 
@@ -139,22 +145,36 @@ namespace ValheimPvPTweaks.KillFeed
                 return;
 
             Log.Info($"Sending discord notifiaction {character.displayName} killed by {attacker.displayName}");
-            var message = "";
-            if (!string.IsNullOrEmpty(attacker.displayName) && !string.IsNullOrEmpty(Plugin.Configuration.KilledMessageFormat.Value))
+            var messageFormat = GetMessageFormat(killData);
+
+            if (string.IsNullOrEmpty(messageFormat)) return;
+
+            _builder.Clear();
+            _builder.Append(messageFormat);
+
+            if (!string.IsNullOrEmpty(attacker.displayName))
             {
                 var attackerName = Localization.instance.Localize(attacker.displayName);
-                message = Plugin.Configuration.KilledMessageFormat.Value
-                    .Replace("{player}", character.displayName)
-                    .Replace("{attacker}", attackerName);
-            }
-            else if (!string.IsNullOrEmpty(Plugin.Configuration.DeadMessageFormat.Value))
-            {
-                message = Plugin.Configuration.DeadMessageFormat.Value
-                    .Replace("{player}", character.displayName);
+                _builder.Replace("{attacker}", attackerName);
             }
 
-            if (!string.IsNullOrEmpty(message))
-                ThreadinUtil.RunThread(() => DiscordTool.SendMessageToDiscord(url, Plugin.Configuration.KillFeedName.Value, message));
+            _builder.Replace("{player}", character.displayName);
+
+            ThreadinUtil.RunThread(() => DiscordTool.SendMessageToDiscord(url,
+                Plugin.Configuration.KillFeedName.Value,
+                _builder.ToString()));
+        }
+
+        private string GetMessageFormat(KillData killData)
+        {
+            var character = killData.killed;
+            var attacker = killData.killer;
+
+            if (string.IsNullOrEmpty(attacker.displayName)) return Plugin.Configuration.DeadMessageFormat.Value;
+
+            return attacker.isPlayer && character.isPlayer
+                ? Plugin.Configuration.KilledInPvpMessageFormat.Value
+                : Plugin.Configuration.KilledMessageFormat.Value;
         }
 
         private string GetName(ZDOID id, out bool isPlayer, out ZDO zdo, out ZNetPeer peer)
@@ -198,7 +218,7 @@ namespace ValheimPvPTweaks.KillFeed
             public CharacterData killer;
             public string weapon;
 
-            public class CharacterData
+            public struct CharacterData
             {
                 public string displayName;
                 public string prefabName;

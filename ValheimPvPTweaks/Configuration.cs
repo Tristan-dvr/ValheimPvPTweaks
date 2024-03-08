@@ -10,6 +10,7 @@ namespace ValheimPvPTweaks
 
         public ConfigEntry<int> MaxDeathPingRadius;
         public ConfigEntry<int> CombatDuration;
+        public ConfigEntry<float> CombatHealthRegen;
         public ConfigEntry<bool> AllowTeleportInCombat;
         public ConfigEntry<bool> AllowChangeEquipmentInCombat;
         public ConfigEntry<bool> CreaturesProtectWard;
@@ -28,6 +29,7 @@ namespace ValheimPvPTweaks
         public ConfigEntry<string> KillFeedName;
         public ConfigEntry<string> DeadMessageFormat;
         public ConfigEntry<string> KilledMessageFormat;
+        public ConfigEntry<string> KilledInPvpMessageFormat;
         public ConfigEntry<string> DisconnectedInCombatFormat;
 
         public ConfigEntry<ConsoleMode> Console;
@@ -61,6 +63,8 @@ namespace ValheimPvPTweaks
                 "Allow teleporation via portals while player in combat");
             AllowChangeEquipmentInCombat = Bind(config, sync, "Combat", "Allow change equipment", true,
                 "Allow equip or unequip clothes, cape and accessories in combat");
+            CombatHealthRegen = Bind(config, sync, "Combat", "Health regen", 1f,
+                "Health regen multiplier during combat");
 
             CreaturesProtectWard = Bind(config, sync, "Tamed cratures", "Attack players", true,
                 "Allow tamed creatures attack players who do something agressive inside the ward they defending");
@@ -101,7 +105,10 @@ namespace ValheimPvPTweaks
                 "The name on whose behalf the mod will post the killfeed in the discord channel", false);
             KilledMessageFormat = Bind(config, sync, "Discord (Server only)",
                 "Killed format", "{player} killed by {attacker}",
-                "Message when player killed by another player or creature", false);
+                "Message when player killed by creature", false);
+            KilledInPvpMessageFormat = Bind(config, sync, "Discord (Server only)",
+                "Killed in PvP format", "{player} killed by {attacker}",
+                "Message when player killed by another player", false);
             DeadMessageFormat = Bind(config, sync, "Discord (Server only)",
                 "Dead format", "{player} is dead",
                 "Message when player dead by other reasons (suicide, drowned etc.)", false);

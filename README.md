@@ -68,27 +68,3 @@ KillFeed.OnCharacterKilled += (killData) =>
 #### Find me on Discord if you got feature request / bug report / found incompatibility with another mod
 Typedef#3996
 https://discord.gg/MjQZKuB4z2
-
-### Changelog
-- 1.0.11 - 1.0.17
-Fixed compatibility with new game versions
-- 1.0.10
-Added an option to configure tomb stone boost and skill loss at death
-- 1.0.9
-Added an option to prevent changing equipment in combat
-- 1.0.8
-Minor update. Fixed discord webhook
-- 1.0.7
-Added option to configure damage of crossbow.
-- 1.0.6
-Added option to modify characteristics of new magical staffs.
-- 1.0.5
-Removed configuration of swords attack angle. It was a bit balanced by Valheim devs.
-Applying damage modifier to new 2-handed sword.
-- 1.0.4
-Mistlands update. Also compatible with previous game version.
-Added option to modify new Boss power. 
-- 1.0.1 - 1.0.3
-minor bugfixes.
-- 1.0.0
-Initial release.
