@@ -14,6 +14,7 @@ namespace ValheimPvPTweaks
         public ConfigEntry<bool> AllowTeleportInCombat;
         public ConfigEntry<bool> AllowChangeEquipmentInCombat;
         public ConfigEntry<bool> CreaturesProtectWard;
+        public ConfigEntry<bool> FollowCreaturesProtectWard;
         public ConfigEntry<float> TamedCreaturesHealthMultiplier;
         public ConfigEntry<float> TamedCreaturesDamageMultiplier;
 
@@ -24,6 +25,12 @@ namespace ValheimPvPTweaks
         public ConfigEntry<string> ModerConfig;
         public ConfigEntry<string> ElderConfig;
         public ConfigEntry<string> SeekerQueenConfig;
+        public ConfigEntry<string> FaderConfig;
+
+        public ConfigEntry<string> StaffShieldAbsorbtionConfig;
+
+        public ConfigEntry<string> SiegeBombDamageConfig;
+        public ConfigEntry<string> RamDamageConfig;
 
         public ConfigEntry<string> DiscordWebhook;
         public ConfigEntry<string> KillFeedName;
@@ -33,19 +40,6 @@ namespace ValheimPvPTweaks
         public ConfigEntry<string> DisconnectedInCombatFormat;
 
         public ConfigEntry<ConsoleMode> Console;
-
-        public ConfigEntry<float> SwordsSecondaryAttackDamage;
-        public ConfigEntry<string> ExcludedSwordsPrefabs;
-        public ConfigEntry<string> IncludedSwordPrefabs;
-
-        public ConfigEntry<string> CrossbowDamage;
-
-        public ConfigEntry<string> StaffFireDamage;
-        public ConfigEntry<int> StaffFireEitr;
-        public ConfigEntry<string> StaffIceDamage;
-        public ConfigEntry<int> StaffIceEitr;
-        public ConfigEntry<string> StaffShield;
-        public ConfigEntry<int> StaffShieldEitr;
 
         public ConfigEntry<bool> EnableTombStoneBoost;
         public ConfigEntry<SkillLossType> SkillsLoss;
@@ -66,11 +60,13 @@ namespace ValheimPvPTweaks
             CombatHealthRegen = Bind(config, sync, "Combat", "Health regen", 1f,
                 "Health regen multiplier during combat");
 
-            CreaturesProtectWard = Bind(config, sync, "Tamed cratures", "Attack players", true,
+            CreaturesProtectWard = Bind(config, sync, "Tamed creatures", "Protect ward", true,
                 "Allow tamed creatures attack players who do something agressive inside the ward they defending");
-            TamedCreaturesHealthMultiplier = Bind(config, sync, "Tamed cratures", "Health multiplier", 1.25f,
+            FollowCreaturesProtectWard = Bind(config, sync, "Tamed creatures", "Protect ward when follow", true,
+                "Allow tamed creatures that following player attack other players who do something agressive inside the player's ward");
+            TamedCreaturesHealthMultiplier = Bind(config, sync, "Tamed creatures", "Health multiplier", 1.25f,
                 "Increase health of tamed creatures");
-            TamedCreaturesDamageMultiplier = Bind(config, sync, "Tamed cratures", "Damage multiplier", 1f,
+            TamedCreaturesDamageMultiplier = Bind(config, sync, "Tamed creatures", "Damage multiplier", 1f,
                 "Increase tamed creatures damage");
 
             ResetBossPowerOnChange = Bind(config, sync, "Boss power", 
@@ -94,6 +90,21 @@ namespace ValheimPvPTweaks
             SeekerQueenConfig = config.Bind("Boss power",
                 "Seeker Queen", "300:1200",
                 "Duration and cooldown of Seeker Queen power (leave empty to leave vanilla values)");
+            FaderConfig = config.Bind("Boss power",
+                "Fader", "300:1200",
+                "Duration and cooldown of Fader power (leave empty to leave vanilla values)");
+
+            StaffShieldAbsorbtionConfig = Bind(config, sync, "Staffs", "Staff shield", "",
+                "Shield resistance - Min:Max (with skill level 100). Recommended: 150:400. Leave empty to leave vanilla values");
+
+            SiegeBombDamageConfig = Bind(config, sync, "Raid", "Siege bomb damage", "",
+                "Damage of siege bomb aoe (chop:pickaxe:damage:blunt:pierce:slash:fire:frost:lighting:poison:spirit).\n" +
+                "Vanilla - 100:400:100:0:0:0:0:0:0:0:0\n" +
+                "Leave empty to leave vanilla values");
+            RamDamageConfig = Bind(config, sync, "Raid", "Ram damage", "",
+                "Damage of Ram aoe (chop:pickaxe:damage:blunt:pierce:slash:fire:frost:lighting:poison:spirit).\n" +
+                "Vanilla - 0:600:0:0:0:0:0:0:0:0:0\n" +
+                "Leave empty to leave vanilla values");
 
             Console = Bind(config, sync, "Console", "Mode", ConsoleMode.AdminOnly,
                 "Allow to force enable or disable console");
@@ -116,29 +127,6 @@ namespace ValheimPvPTweaks
                 "Disconnected in combat", "{player} ran away like a coward!",
                 "Message when player logged out with combat effect", false);
 
-            SwordsSecondaryAttackDamage = Bind(config, sync, "Swords secondary attack", "Damage multiplier", 0f,
-                "3 in vanilla, 2 is recommended, leave 0 to leave vanilla values");
-            ExcludedSwordsPrefabs = Bind(config, sync, "Swords secondary attack", "Excluded prefabs", "",
-                "Sword prefabs which will not be changed. Divided by ','.");
-            IncludedSwordPrefabs = Bind(config, sync, "Swords secondary attack", "Included prefabs", "",
-                "Prefabs which will not be changed. Divided by ','.");
-
-            StaffFireDamage = Bind(config, sync, "Staffs", "Fireball staff damage", "",
-                "Damage of Fireball staff - Damage:Damage per item level. Recommended: 80:4. Leave empty to leave vanilla values");
-            StaffFireEitr = Bind(config, sync, "Staffs", "Fireball staff eitr", 0,
-                "Fireball staff Eitr consumption. 35 in vanilla, 40 is recommended, leave 0 to leave vanilla values");
-            StaffIceDamage = Bind(config, sync, "Staffs", "Ice staff damage", "",
-                "Damage of Ice staff - Damage:Damage per item level. Recommended: 45:4. Leave empty to leave vanilla values");
-            StaffIceEitr = Bind(config, sync, "Staffs", "Ice staff eitr", 0,
-                "Ice staff Eitr consumption. 5 in vanilla, 5 is recommended, leave 0 to leave vanilla values");
-            StaffShield = Bind(config, sync, "Staffs", "Staff shield", "",
-                "Shield resistance - Min:Max (with skill level 100). Recommended: 150:400. Leave empty to leave vanilla values");
-            StaffShieldEitr = Bind(config, sync, "Staffs", "Staff shield eitr", 0,
-                "Staff shield Eitr consumption. 60 in vanilla, 75 is recommended, leave 0 to leave vanilla values");
-
-            CrossbowDamage = Bind(config, sync, "Crossbow", "Damage", "",
-                "Damage of crossbow - Damage:Damage per item level. Recommended: 150:5. Leave empty to leave vanilla values");
-
             EnableTombStoneBoost = Bind(config, sync, "Tweaks", "Tomb stone boost", true,
                 "Tomb stone boost can be disabled to prevent abuse it to get an advantage in pvp.");
             SkillsLoss = Bind(config, sync, "Tweaks", "Skills loss", SkillLossType.Vanilla,
@@ -147,7 +135,7 @@ namespace ValheimPvPTweaks
                 $"{SkillLossType.NoLoss} - you dont loose skills on death at all");
         }
 
-        private ConfigEntry<T> Bind<T>(ConfigFile config, ConfigSync sync, string section, string key, T value, string description, bool syncWithServer = true)
+        private static ConfigEntry<T> Bind<T>(ConfigFile config, ConfigSync sync, string section, string key, T value, string description, bool syncWithServer = true)
         {
             var entry = config.Bind(section, key, value, description);
             if (syncWithServer)

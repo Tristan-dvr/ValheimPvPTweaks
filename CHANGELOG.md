@@ -1,3 +1,8 @@
+- 1.1.0
+  - Added configuration for siege weapons
+  - Added configuration for Fader power
+  - Tamed animals that follows player now can protect player's ward inside ward zone
+  - Weapon balance configs moved to separated config files for WackyDatabase
 - 1.0.18
   - Fixed auto-equipment of items in battle
   - Added an option to change the speed of health regeneration in battle

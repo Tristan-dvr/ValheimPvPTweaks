@@ -10,9 +10,25 @@ They now know how to protect the ward. Any hostile viking in the ward zone will 
 If a viking is dead, all other vikings in the detection radius will immediately know about it. And they will be able to steal loot from the grave, perhaps? Or wait for the owner?
 
 ## Weapons balancing!
-Some weapons are not balanced for pvp. To fix this, the mod adds the ability to configure their characteristics. The mod allows you to configure the damage of swords, staffs and crossbow.
+Some weapons are not balanced for pvp. Next settings will change the stats of the most imbalanced (too strong or too weak) items, such as swords, staffs and crossbows.You can download the configuration yourself and install it on your server.
 
-Using this options is highly recommended, because this will add to the list of weapons that can be used effectively in PvP!
+Download link - [click](https://github.com/Tristan-dvr/ValheimPvPTweaks/tree/master/WeaponBalance)
+<details><summary>Configurations description</summary>
+
+> To use the configurations you must install [WackyDatabase](https://thunderstore.io/c/valheim/p/WackyMole/WackysDatabase/) to your server.
+
+Changes
+- change damage multiplier from secondary swords attack from x3 to x2
+- reduce damage of all crossbows
+- increase attack angle of atgeirs (they're easier to hit)
+- increase eitr consumption for all staffs
+- reduced damage of fireball staff
+- increased damage of ice staff
+- _configuration may be updated periodically)_
+
+</details>
+
+Using this configurations is highly recommended, because this will add to the list of weapons that can be used effectively in PvP!
 
 ## Customizable boss powers
 Boss powers are also too unbalanced for PvP, so the mod has the ability to adjust the duration and recovery time of each boss power.

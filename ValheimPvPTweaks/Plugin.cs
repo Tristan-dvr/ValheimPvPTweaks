@@ -3,7 +3,6 @@ using HarmonyLib;
 using Jotunn.Managers;
 using ServerSync;
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace ValheimPvPTweaks
@@ -14,7 +13,7 @@ namespace ValheimPvPTweaks
     {
         private const string Guid = "org.tristan.pvptweaks";
         public const string Name = "Valheim PvP Tweaks";
-        public const string Version = "1.0.18";
+        public const string Version = "1.1.0";
 
         internal static Configuration Configuration { get; private set; }
         internal static ConfigSync Sync { get; private set; }
@@ -60,59 +59,11 @@ namespace ValheimPvPTweaks
             SetStatusEffectConfig(config.ModerConfig.Value, "GP_Moder");
             SetStatusEffectConfig(config.ElderConfig.Value, "GP_TheElder"); 
             SetStatusEffectConfig(config.SeekerQueenConfig.Value, "GP_Queen");
+            SetStatusEffectConfig(config.FaderConfig.Value, "GP_Fader");
             Log.Debug("Boss powers updated");
         }
 
-        private static void RefreshSwordsSecondaryAttack()
-        {
-            var damageMultiplier = Configuration.SwordsSecondaryAttackDamage.Value;
-            var excludedPrefabs = Configuration.ExcludedSwordsPrefabs.Value.Split(',');
-            var includedPrefabs = Configuration.IncludedSwordPrefabs.Value.Split(',');
-
-            foreach (var item in ObjectDB.instance.m_items
-                .Select(i => i.GetComponent<ItemDrop>())
-                .Where(i => IsSword(i) || includedPrefabs.Contains(i.name))
-                .Where(i => !excludedPrefabs.Contains(i.name)))
-            {
-                if (damageMultiplier > 0)
-                {
-                    Log.Debug($"{item.name} secondary attack damage changed {item.m_itemData.m_shared.m_secondaryAttack.m_damageMultiplier}->{damageMultiplier}");
-                    item.m_itemData.m_shared.m_secondaryAttack.m_damageMultiplier = damageMultiplier;
-                }
-            }
-        }
-
-        private static void UpdateStaffsDamage(Configuration configuration)
-        {
-            SetStaffConfig("StaffFireball", 
-                configuration.StaffFireDamage.Value, 
-                configuration.StaffFireEitr.Value,
-                (hit, d) =>
-                {
-                    hit.m_blunt = d;
-                    hit.m_fire = d;
-                    return hit;
-                }, (hit, d) =>
-                {
-                    hit.m_fire = d;
-                    return hit;
-                });
-            SetStaffConfig("StaffIceShards", configuration.StaffIceDamage.Value, 
-                configuration.StaffIceEitr.Value,
-                (hit, d) =>
-                {
-                    hit.m_frost = d;
-                    return hit;
-                }, (hit, d) =>
-                {
-                    hit.m_frost = d;
-                    return hit;
-                });
-            SetShieldStaffConfig("StaffShield", configuration.StaffShield.Value, configuration.StaffShieldEitr.Value);
-            Log.Debug("Staffs updated");
-        }
-
-        private static void SetShieldStaffConfig(string name, string config, int eitrConsumption)
+        private static void SetShieldStaffConfig(string name, string config)
         {
             var staff = ObjectDB.instance.GetItemPrefab(name);
             if (staff != null && staff.TryGetComponent<ItemDrop>(out var item))
@@ -129,9 +80,6 @@ namespace ValheimPvPTweaks
                 {
                     Log.Warning($"Cannot update shield staff values. Cannot parse config {config}");
                 }
-
-                if (eitrConsumption > 0)
-                    item.m_itemData.m_shared.m_attack.m_attackEitr = eitrConsumption;
             }
         }
 
@@ -149,66 +97,41 @@ namespace ValheimPvPTweaks
             }
         }
 
-        private static bool IsSword(ItemDrop item)
+        private static void ApplyConfiguration()
         {
-            var skillType = item.m_itemData.m_shared.m_skillType;
-            var itemType = item.m_itemData.m_shared.m_itemType;
-            return skillType == Skills.SkillType.Swords
-                && (itemType == ItemDrop.ItemData.ItemType.OneHandedWeapon || itemType == ItemDrop.ItemData.ItemType.TwoHandedWeapon)
-                && item.m_itemData.m_shared.m_secondaryAttack.m_attackType != Attack.AttackType.None
-                && HasRecipe(item);
+            if (ZNet.instance.IsDedicated())
+                return;
+
+            RefreshStatusEffects(Configuration);
+            SetShieldStaffConfig("StaffShield", Configuration.StaffShieldAbsorbtionConfig.Value);
+            SetSiegeItemsConfiguration(Configuration);
+            Log.Message("Config applied");
         }
 
-        private static void SetStaffConfig(string name, 
-            string config,
-            int eitrConsumption,
-            Func<HitData.DamageTypes, int, HitData.DamageTypes> onSetDamage,
-            Func<HitData.DamageTypes, int, HitData.DamageTypes> onSetDamagePerLevel)
+        private static void SetSiegeItemsConfiguration(Configuration configuration)
         {
-            var staff = ObjectDB.instance.GetItemPrefab(name);
-            if (staff != null && staff.TryGetComponent<ItemDrop>(out var item))
+            if (TryParseDamage(configuration.SiegeBombDamageConfig.Value, out var siegeBombDamage))
             {
-                if (TryParseTwoValues(config, out var damage, out var damagePerLevel))
+                var siegeBombAoe = ZNetScene.instance.GetPrefabComponent<Aoe>("siegebomb_explosion");
+                siegeBombAoe.m_damage = siegeBombDamage;
+            }
+            else if (!string.IsNullOrEmpty(configuration.SiegeBombDamageConfig.Value))
+            {
+                Log.Error("Cannot parse damage for Siege bomb");
+            }
+
+            if (TryParseDamage(configuration.RamDamageConfig.Value, out var ramMachineDamage))
+            {
+                var ram = ZNetScene.instance.GetPrefabComponent<SiegeMachine>("BatteringRam");
+                foreach (var aoe in ram.m_aoe.GetComponentsInChildren<Aoe>(true))
                 {
-                    item.m_itemData.m_shared.m_damages = onSetDamage.Invoke(item.m_itemData.m_shared.m_damages, damage);
-                    item.m_itemData.m_shared.m_damagesPerLevel = onSetDamagePerLevel.Invoke(item.m_itemData.m_shared.m_damagesPerLevel, damagePerLevel);
-                    Log.Debug($"{name} updated damage {damage}:{damagePerLevel}");
+                    aoe.m_damage = ramMachineDamage;
                 }
-                else if (!string.IsNullOrEmpty(config))
-                {
-                    Log.Warning($"Cannot update staff damage {name}, cannot parse config {config}");
-                }
-                if (eitrConsumption > 0)
-                    item.m_itemData.m_shared.m_attack.m_attackEitr = eitrConsumption;
             }
-        }
-
-        private static void UpdateArbalestDamage(Configuration configuration)
-        {
-            var prefabName = "CrossbowArbalest";
-            var config = configuration.CrossbowDamage.Value;
-            if (TryParseTwoValues(config, out var damage, out var damagePerLevel))
+            else if (!string.IsNullOrEmpty(configuration.RamDamageConfig.Value))
             {
-                var item = ZNetScene.instance.GetPrefabComponent<ItemDrop>(prefabName);
-
-                var damages = item.m_itemData.m_shared.m_damages;
-                damages.m_pierce = damage;
-                item.m_itemData.m_shared.m_damages = damages;
-
-                damages = item.m_itemData.m_shared.m_damagesPerLevel;
-                damages.m_pierce = damagePerLevel;
-                item.m_itemData.m_shared.m_damagesPerLevel = damages;
-                Log.Debug($"{prefabName} updated damage {damage}:{damagePerLevel}");
+                Log.Error("Cannot parse damage for Ram");
             }
-            else if (!string.IsNullOrEmpty(config))
-            {
-                Log.Warning($"Cannot update crossbow damage {prefabName}, cannot parse config {config}");
-            }
-        }
-
-        private static bool HasRecipe(ItemDrop item)
-        {
-            return ObjectDB.instance.m_recipes.Any(r => r.m_item == item);
         }
 
         private static bool TryParseTwoValues(string text, out int value1, out int value2)
@@ -227,16 +150,32 @@ namespace ValheimPvPTweaks
             }
         }
 
-        private static void ApplyConfiguration()
+        private static bool TryParseDamage(string text, out HitData.DamageTypes damage)
         {
-            if (ZNet.instance.IsDedicated())
-                return;
-
-            RefreshSwordsSecondaryAttack();
-            RefreshStatusEffects(Configuration);
-            UpdateStaffsDamage(Configuration);
-            UpdateArbalestDamage(Configuration);
-            Log.Message("Config applied");
+            try
+            {
+                var split = text.Split(':');
+                damage = new HitData.DamageTypes
+                {
+                    m_pickaxe = int.Parse(split[0]),
+                    m_chop = int.Parse(split[1]),
+                    m_damage = int.Parse(split[2]),
+                    m_blunt = int.Parse(split[3]),
+                    m_pierce = int.Parse(split[4]),
+                    m_slash = int.Parse(split[5]),
+                    m_fire = int.Parse(split[6]),
+                    m_frost = int.Parse(split[7]),
+                    m_lightning = int.Parse(split[8]),
+                    m_poison = int.Parse(split[9]),
+                    m_spirit = int.Parse(split[10]),
+                };
+                return true;
+            }
+            catch
+            {
+                damage = default;
+                return false;
+            }
         }
 
         [HarmonyPatch]

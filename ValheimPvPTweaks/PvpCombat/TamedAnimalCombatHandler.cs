@@ -100,10 +100,33 @@ namespace ValheimPvPTweaks.PvpCombat
             if (_view == null || !_view.IsValid() || !_view.IsOwner())
                 return;
 
-            if (IsFollowingPlayer())
+            var followPlayer = GetFollowPlayer();
+
+            if (followPlayer == null)
+            {
+                _defendingArea = PrivateArea.m_allAreas.FirstOrDefault(IsActiveAndInside);
+                return;
+            }
+
+            if (!Plugin.Configuration.FollowCreaturesProtectWard.Value)
+            {
                 _defendingArea = null;
-            else
-                _defendingArea = PrivateArea.m_allAreas.FirstOrDefault(p => p.IsEnabled() && p.IsInside(transform.position, 0));
+                return;
+            }
+
+            _defendingArea = PrivateArea.m_allAreas
+                .FirstOrDefault(p => IsPermitted(p, followPlayer.GetPlayerID()) && IsActiveAndInside(p));
+        }
+
+        private bool IsActiveAndInside(PrivateArea privateArea)
+        {
+            return privateArea.IsEnabled() && privateArea.IsInside(transform.position, 0f);
+        }
+
+        private bool IsPermitted(PrivateArea privateArea, long playerId)
+        {
+            return privateArea.IsPermitted(playerId)
+                || privateArea.m_piece != null && privateArea.m_piece.GetCreator() == playerId;
         }
     }
 }

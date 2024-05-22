@@ -1,0 +1,1 @@
+To apply the configuration you need to copy the files to a folder `BepInEx\config\wackysDatabase` on your server or modpack.
