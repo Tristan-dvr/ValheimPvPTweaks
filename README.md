@@ -80,7 +80,4 @@ KillFeed.OnCharacterKilled += (killData) =>
 ```
 </details>
 
-
-#### Find me on Discord if you got feature request / bug report / found incompatibility with another mod
-Typedef#3996
-https://discord.gg/MjQZKuB4z2
+#### If you have any questions / bug reports / suggestions for improvement or found incompatibility with another mod, feel free to contact me in discord `typedeff`
