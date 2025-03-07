@@ -1,3 +1,5 @@
+- 1.1.1
+  - Fixed compatibility with new game version
 - 1.1.0
   - Added configuration for siege weapons
   - Added configuration for Fader power
